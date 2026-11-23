@@ -1,0 +1,235 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>ФитТрек</title><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg"><meta name="theme-color" content="#12141c"><script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#12141c;--cd:#1c2030;--cd2:#262b40;--tx:#eef0ff;--mu:#8e96bd;--ac:#38bdf8;--ok:#4ade80;--rd:#f87171}
+body[data-g=f]{--ac:#f472b6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{padding:calc(10px + env(safe-area-inset-top)) 14px 90px;max-width:560px;margin:0 auto;min-height:100vh}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+h1{font-size:22px;margin:0}h2{font-size:18px;margin:18px 0 8px}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.ic{background:var(--cd);width:40px;height:40px;border-radius:12px;font-size:19px}
+.card{background:var(--cd);border-radius:16px;padding:14px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:12px;background:var(--cd);border-radius:16px;padding:8px 12px;margin-bottom:8px;cursor:pointer}
+.row svg{width:78px;height:58px;flex:none;background:var(--cd2);border-radius:12px}
+.row .nm{font-weight:700;font-size:15px}.row .sub{font-size:12.5px;color:var(--mu);margin-top:2px}
+.badge{margin-left:auto;background:var(--ac);color:#00131c;font-weight:800;border-radius:10px;padding:3px 9px;font-size:13px;flex:none}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}
+.chip{background:var(--cd);border-radius:20px;padding:8px 14px;white-space:nowrap;font-size:14px;font-weight:600;flex:none}
+.chip.on{background:var(--ac);color:#00131c}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:#171a26;border-top:1px solid #272c42;padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:20;max-width:560px;margin:0 auto}
+.tabs button{flex:1;background:none;font-size:11.5px;color:var(--mu);padding:4px 0;font-weight:600}
+.tabs button b{display:block;font-size:21px;margin-bottom:1px}
+.tabs button.on{color:var(--ac)}
+.big{font-size:38px;font-weight:800}
+.mu{color:var(--mu);font-size:13px}
+.btn{background:var(--ac);color:#00131c;font-weight:800;font-size:17px;border-radius:14px;padding:14px;width:100%}
+.btn2{background:var(--cd2);border-radius:12px;padding:10px 14px;font-weight:700}
+.ov{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:auto;padding:calc(10px + env(safe-area-inset-top)) 14px 40px;max-width:560px;margin:0 auto}
+.fig{width:100%;height:auto;background:var(--cd);border-radius:18px;display:block}
+.bd{stroke:#dfe4ff;stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ar{stroke:var(--ac);stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fl{stroke:#7d86b3;stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hd0{fill:#dfe4ff}.eq{fill:#ffd166}.eqr{fill:none;stroke:#ffd166;stroke-width:5}.cb{stroke:#ffd166;stroke-width:2;fill:none}
+.gr{stroke:#3b4263;stroke-width:3}.bn{fill:#3b4263}
+.st{display:flex;align-items:center;gap:8px;margin:8px 0}
+.st button{width:46px;height:46px;border-radius:12px;background:var(--cd2);font-size:22px;font-weight:700}
+.st input{flex:1;min-width:0;height:46px;border-radius:12px;border:0;background:var(--cd2);color:var(--tx);font-size:22px;font-weight:800;text-align:center}
+.st label{width:64px;font-size:13px;color:var(--mu)}
+.set{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #2a2f47;font-size:15px}
+.set i{font-style:normal;color:var(--rd);cursor:pointer;padding:0 8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gc{background:var(--cd);border-radius:18px;padding:18px 8px;text-align:center;font-weight:800;font-size:17px;border:2px solid transparent}
+.gc b{display:block;font-size:42px}.gc.on{border-color:var(--ac)}
+.in{width:100%;height:46px;border-radius:12px;border:0;background:var(--cd2);color:var(--tx);font-size:18px;padding:0 12px;margin:4px 0 10px}
+.stat{background:var(--cd);border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:26px}
+.ach{display:inline-block;background:var(--cd2);border-radius:14px;padding:7px 11px;margin:0 6px 6px 0;font-size:13px;font-weight:700;color:#707898}
+.ach.on{background:#4b3f10;color:#ffe08a}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#fff;color:#111;font-weight:800;padding:10px 16px;border-radius:18px;z-index:99;display:none;max-width:88vw;text-align:center}
+.tip{margin:6px 0;font-size:14.5px;line-height:1.35}
+.note{font-size:12px;color:var(--mu);margin-top:14px;line-height:1.35}
+</style></head><body><div id="app"></div><div id="ov" class="ov" style="display:none"></div><div id="toast"></div><script>
+(function(){
+var tg=window.Telegram&&Telegram.WebApp;try{tg.ready();tg.expand();}catch(e){}
+var lc='';try{lc=tg.initDataUnsafe.user.language_code||'';}catch(e){}if(!lc)lc=navigator.language||'ru';
+var RU=/^(ru|uk|be|kk|tg|uz|ky|tk)/i.test(lc);
+function L(a,b){return RU?a:b;}
+document.documentElement.lang=RU?'ru':'en';
+function buzz(){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
+var STAND={H:[104,40],S:[100,56],P:[100,100],K:[100,130],F:[106,158]};
+function mk(b,o){var r={};for(var k in b)r[k]=b[k];for(var k2 in o)r[k2]=o[k2];return r;}
+var BENT={H:[132,64],S:[120,74],P:[80,100],K:[84,130],F:[80,158]};
+var PU_A={H:[166,112],S:[150,118],P:[95,138],K:[67,148],F:[40,158],E:[150,140],W:[150,160]};
+var PU_B={H:[166,138],S:[150,144],P:[95,151],K:[67,154],F:[40,158],E:[128,156],W:[150,160]};
+var BP_A={H:[60,108],S:[80,116],P:[125,116],K:[152,94],F:[158,124],E:[86,128],W:[84,104]};
+var BP_B=mk(BP_A,{E:[82,92],W:[82,68]});
+var SEAT={H:[94,56],S:[90,74],P:[90,118],K:[122,114],F:[124,152]};
+var LY={H:[40,150],S:[58,152],P:[104,152],K:[134,124],F:[124,157],E:[80,156],W:[100,157]};
+var QUAD={H:[166,100],S:[150,106],P:[100,108],E:[150,132],W:[150,158],K2:[100,142],F2:[80,158]};
+var MU={chest:['🏋️','Грудь','Chest'],back:['🧗','Спина','Back'],shoulders:['🤸','Плечи','Shoulders'],biceps:['💪','Бицепс','Biceps'],triceps:['🦾','Трицепс','Triceps'],legs:['🦵','Ноги','Legs'],glutes:['🍑','Ягодицы','Glutes'],abs:['🔥','Пресс','Abs']};
+var ORDER={m:['chest','back','shoulders','biceps','triceps','legs','abs','glutes'],f:['glutes','legs','abs','back','shoulders','triceps','biceps','chest']};
+var EX=[
+{id:'overhead',m:'triceps',n:['Разгибание руки с гантелью над головой','Overhead dumbbell extension'],eq:'db',w:[10,4],a:mk(STAND,{H:[110,40],E:[96,32],W:[80,50]}),b:mk(STAND,{H:[110,40],E:[98,32],W:[98,8]}),
+ t:[['Локоть смотри вверх и не разводи в стороны','Keep the elbow pointing up, don\'t flare it'],['Опускай гантель медленно, за голову','Lower the weight slowly behind your head'],['Корпус не прогибай, пресс напряжён','Don\'t arch your back, brace your abs']]},
+{id:'kickback',m:'triceps',n:['Разгибание руки в наклоне','Triceps kickback'],eq:'db',w:[6,2],a:mk(BENT,{E:[96,82],W:[96,106]}),b:mk(BENT,{E:[96,82],W:[72,84]}),
+ t:[['Плечо прижато к корпусу и не двигается','Upper arm stays tight to your body'],['Работает только предплечье','Only the forearm moves'],['В конце на секунду задержись','Squeeze for a second at the top']]},
+{id:'closepush',m:'triceps',n:['Отжимания узким хватом','Close-grip push-ups'],eq:'none',w:[0,0],a:PU_A,b:PU_B,
+ t:[['Руки под плечами, локти вдоль тела','Hands under shoulders, elbows close to your body'],['Корпус — ровная линия','Keep your body in a straight line'],['Тяжело? Отжимайся с колен','Too hard? Do them from your knees']]},
+{id:'press',m:'shoulders',n:['Жим гантелей стоя','Standing dumbbell press'],eq:'db',w:[12,4],a:mk(STAND,{H:[108,40],E:[106,78],W:[104,54]}),b:mk(STAND,{H:[108,40],E:[102,34],W:[102,10]}),
+ t:[['Не прогибай поясницу','Don\'t arch your lower back'],['Жми вверх и чуть назад','Press up and slightly back'],['Опускай до уровня плеч','Lower to shoulder level']]},
+{id:'frontraise',m:'shoulders',n:['Подъём гантели перед собой','Front raise'],eq:'db',w:[8,3],a:mk(STAND,{E:[102,80],W:[102,104]}),b:mk(STAND,{E:[124,58],W:[148,58]}),
+ t:[['Поднимай до уровня плеч, не выше','Raise to shoulder height, no higher'],['Без раскачки корпусом','No swinging'],['Опускай подконтрольно','Lower with control']]},
+{id:'curl',m:'biceps',n:['Подъём гантели на бицепс','Dumbbell curl'],eq:'db',w:[10,4],a:mk(STAND,{E:[100,80],W:[100,104]}),b:mk(STAND,{E:[100,80],W:[120,62]}),
+ t:[['Локти прижаты к корпусу','Keep elbows pinned to your sides'],['Вверх — на выдохе, вниз медленно','Up on the exhale, down slowly'],['Не помогай спиной','Don\'t swing your back']]},
+{id:'bench',m:'chest',n:['Жим штанги лёжа','Bench press'],eq:'plate',bench:'bench',w:[40,15],a:BP_A,b:BP_B,
+ t:[['Лопатки сведены и прижаты к скамье','Shoulder blades pinched and pressed into the bench'],['Штангу опускай к низу груди','Lower the bar to your lower chest'],['Первое время — со страховкой','Use a spotter at first']]},
+{id:'pushup',m:'chest',n:['Отжимания от пола','Push-ups'],eq:'none',w:[0,0],a:PU_A,b:PU_B,
+ t:[['Руки чуть шире плеч','Hands slightly wider than shoulders'],['Грудью почти касайся пола','Lower your chest close to the floor'],['Тело — прямая линия, не провисай','Keep a straight line, no sagging']]},
+{id:'row',m:'back',n:['Тяга гантели в наклоне','Bent-over dumbbell row'],eq:'db',w:[16,6],a:mk(BENT,{E:[122,98],W:[122,122]}),b:mk(BENT,{E:[98,84],W:[108,104]}),
+ t:[['Спина прямая, наклон почти до горизонтали','Flat back, lean almost to horizontal'],['Тяни локоть к поясу','Pull the elbow toward your hip'],['Сведи лопатку в верхней точке','Squeeze your shoulder blade at the top']]},
+{id:'pulldown',m:'back',n:['Тяга верхнего блока','Lat pulldown'],eq:'cable',bench:'seat',w:[40,20],a:mk(SEAT,{E:[98,52],W:[106,28]}),b:mk(SEAT,{E:[82,92],W:[104,76]}),
+ t:[['Тяни к верху груди, не за голову','Pull to your upper chest, not behind your head'],['Грудь вперёд, лопатки вниз','Chest up, shoulders down'],['Не раскачивайся','Don\'t swing']]},
+{id:'squat',m:'legs',n:['Приседания','Squats'],eq:'none',w:[0,0],a:mk(STAND,{E:[112,68],W:[130,62]}),b:{H:[100,54],S:[94,74],P:[70,118],K:[114,114],F:[108,158],E:[110,82],W:[128,76]},
+ t:[['Колени смотрят туда же, куда носки','Knees track over your toes'],['Таз назад, спина прямая','Hips back, back straight'],['Пятки не отрывай от пола','Keep your heels down']]},
+{id:'lunge',m:'legs',n:['Выпады назад-вперёд','Lunges'],eq:'none',w:[0,0],a:mk(STAND,{E:[100,80],W:[102,104],K2:[96,130],F2:[90,158]}),b:{H:[108,46],S:[104,66],P:[104,112],K:[132,116],F:[134,158],E:[104,90],W:[104,114],K2:[84,144],F2:[64,158]},
+ t:[['Корпус прямой, шаг достаточно широкий','Upright torso, long enough step'],['Переднее колено над стопой','Front knee over your foot'],['Задним коленом почти коснись пола','Back knee nearly touches the floor']]},
+{id:'rdl',m:'legs',n:['Румынская тяга','Romanian deadlift'],eq:'plate',w:[30,15],a:mk(STAND,{E:[100,80],W:[102,104]}),b:{H:[136,72],S:[124,80],P:[80,100],K:[86,128],F:[86,158],E:[126,102],W:[126,126]},
+ t:[['Таз уходит назад, колени чуть согнуты','Push hips back, knees slightly bent'],['Штанга скользит вдоль ног','Keep the bar close to your legs'],['Спина прямая всё время','Keep your back flat throughout']]},
+{id:'bridge',m:'glutes',n:['Ягодичный мостик','Glute bridge'],eq:'none',w:[0,0],a:LY,b:mk(LY,{P:[104,126],K:[134,112],F:[130,157]}),
+ t:[['Поднимай таз за счёт ягодиц','Lift with your glutes'],['Вверху сожми ягодицы на секунду','Squeeze at the top for a second'],['Поясницу не прогибай','Don\'t over-arch your lower back']]},
+{id:'donkey',m:'glutes',n:['Отведение ноги назад на четвереньках','Donkey kick'],eq:'none',w:[0,0],a:mk(QUAD,{K:[100,142],F:[78,158]}),b:mk(QUAD,{K:[72,110],F:[70,80]}),
+ t:[['Нога согнута под 90°, пятка к потолку','Knee bent 90°, heel to the ceiling'],['Таз не заваливай вбок','Keep your hips level'],['Вверху задержись и сожми ягодицу','Pause and squeeze at the top']]},
+{id:'crunch',m:'abs',n:['Скручивания','Crunches'],eq:'none',w:[0,0],a:{H:[52,146],S:[68,150],P:[110,152],K:[136,128],F:[124,157],E:[58,136],W:[54,146]},b:{H:[90,124],S:[84,138],P:[110,152],K:[136,128],F:[124,157],E:[78,122],W:[84,118]},
+ t:[['Поясница прижата к полу','Lower back stays on the floor'],['Подбородок не тяни к груди','Don\'t pull your chin to your chest'],['Поднимай только лопатки','Lift only your shoulder blades']]},
+{id:'legraise',m:'abs',n:['Подъём ног лёжа','Lying leg raise'],eq:'none',w:[0,0],a:mk(LY,{K:[134,152],F:[164,154]}),b:mk(LY,{K:[104,120],F:[104,88]}),
+ t:[['Поясница прижата, не прогибайся','Keep your lower back pressed down'],['Опускай ноги медленно','Lower your legs slowly'],['Тяжело — согни колени','Too hard? Bend your knees']]}
+];
+var EXI={};EX.forEach(function(e){EXI[e.id]=e;});
+var PLAN={m:[[['Грудь + трицепс','Chest + triceps'],['bench','pushup','overhead','kickback']],[['Спина + бицепс','Back + biceps'],['pulldown','row','rdl','curl']],[['Ноги + плечи','Legs + shoulders'],['squat','lunge','press','frontraise','legraise']]],
+ f:[[['Ягодицы + ноги','Glutes + legs'],['bridge','donkey','squat','lunge','rdl']],[['Верх тела','Upper body'],['pulldown','row','press','curl','kickback']],[['Ягодицы + пресс','Glutes + abs'],['bridge','lunge','donkey','crunch','legraise']]]};
+var GOALS={mass:['💪','Набор массы','Build muscle','8–12'],loss:['🔥','Похудение','Lose fat','12–15'],shape:['✨','Форма','Tone up','10–15']};
+window.FT={L:L,RU:RU,buzz:buzz,tg:tg,MU:MU,ORDER:ORDER,EX:EX,EXI:EXI,PLAN:PLAN,GOALS:GOALS,mk:mk};
+})();
+(function(){
+var F=window.FT,L=F.L,MU=F.MU,EX=F.EX,EXI=F.EXI,PLAN=F.PLAN,GOALS=F.GOALS,buzz=F.buzz;
+function p2(n){return n<10?'0'+n:''+n;}
+function dkey(d){d=d||new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
+function load(){var d={g:'',goal:'mass',h:0,gw:0,wt:[],log:[],last:{}};try{var o=JSON.parse(localStorage.getItem('ft1')||'{}');for(var k in o)d[k]=o[k];}catch(e){}return d;}
+var S=load();function save(){try{localStorage.setItem('ft1',JSON.stringify(S));}catch(e){}}
+var tab='today',mus='all',planDay=-1,openId=null,form={w:0,r:10},settings=false,raf=0,figEl=null,figEx=null;
+var $app=document.getElementById('app'),$ov=document.getElementById('ov'),$t=document.getElementById('toast'),tT=0;
+function toast(s){$t.textContent=s;$t.style.display='block';clearTimeout(tT);tT=setTimeout(function(){$t.style.display='none';},2400);}
+function nm(e){return L(e.n[0],e.n[1]);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function pts(ex,t){var o={};for(var k in ex.a){var A=ex.a[k],B=ex.b[k]||A;o[k]=[lerp(A[0],B[0],t),lerp(A[1],B[1],t)];}return o;}
+function pl(c,a){return '<polyline class="'+c+'" points="'+a.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'"/>';}
+function figInner(ex,t){var p=pts(ex,t),s='<line class="gr" x1="8" y1="162" x2="232" y2="162"/>';
+ if(ex.bench==='bench')s+='<rect class="bn" x="50" y="124" width="130" height="8" rx="3"/><rect class="bn" x="60" y="132" width="5" height="30"/><rect class="bn" x="165" y="132" width="5" height="30"/>';
+ if(ex.bench==='seat')s+='<rect class="bn" x="68" y="124" width="46" height="8" rx="3"/><rect class="bn" x="88" y="132" width="5" height="30"/>';
+ if(ex.eq==='cable')s+='<line class="cb" x1="'+p.W[0]+'" y1="0" x2="'+p.W[0]+'" y2="'+p.W[1]+'"/>';
+ if(p.K2)s+=pl('fl',[p.P,p.K2,p.F2]);
+ s+=pl('bd',[p.S,p.P])+pl('bd',[p.P,p.K,p.F])+pl('bd',[p.S,p.H])+pl('ar',[p.S,p.E,p.W]);
+ s+='<circle class="hd0" cx="'+p.H[0]+'" cy="'+p.H[1]+'" r="10"/>';
+ if(ex.eq==='db'||ex.eq==='cable')s+='<circle class="eq" cx="'+p.W[0]+'" cy="'+p.W[1]+'" r="7"/>';
+ if(ex.eq==='plate')s+='<circle class="eqr" cx="'+p.W[0]+'" cy="'+p.W[1]+'" r="11"/>';
+ return s;}
+function thumb(ex){return '<svg viewBox="0 0 240 170">'+figInner(ex,1)+'</svg>';}
+function isBody(ex){return ex.w[0]===0&&ex.w[1]===0;}
+function startW(ex){return ex.w[S.g==='f'?1:0];}
+function recReps(ex){return ex.m==='abs'?'15–20':GOALS[S.goal||'mass'][3];}
+function rec(ex){return '3 × '+recReps(ex);}
+function logsOf(id){return S.log.filter(function(l){return l.e===id;});}
+function best(id){var m=0;logsOf(id).forEach(function(l){if(l.w>m)m=l.w;});return m;}
+function days(){var o={};S.log.forEach(function(l){o[l.d]=1;});return o;}
+function streak(){var d=days(),n=0,c=new Date();if(!d[dkey(c)])c.setDate(c.getDate()-1);while(d[dkey(c)]){n++;c.setDate(c.getDate()-1);}return n;}
+function vol(){var v=0;S.log.forEach(function(l){v+=l.w*l.r;});return Math.round(v);}
+function chart(a,w,h,unit){if(a.length<2)return '<div class="mu" style="padding:14px 0">'+L('Нужно минимум 2 записи, чтобы показать график','Need at least 2 entries to draw a chart')+'</div>';
+ var mn=Math.min.apply(0,a.map(function(x){return x.y;})),mx=Math.max.apply(0,a.map(function(x){return x.y;}));if(mx===mn){mx+=1;mn-=1;}
+ var pd=28,X=function(i){return pd+i*(w-pd*1.4)/(a.length-1);},Y=function(v){return h-pd+ -(v-mn)/(mx-mn)*(h-pd*2);};
+ var d=a.map(function(x,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(x.y).toFixed(1);}).join(' ');
+ var s='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%"><path d="'+d+'" fill="none" stroke="var(--ac)" stroke-width="3" stroke-linejoin="round"/>';
+ a.forEach(function(x,i){s+='<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(x.y).toFixed(1)+'" r="3.5" fill="var(--ac)"/>';});
+ s+='<text x="4" y="'+(Y(mx)+4)+'" fill="#8e96bd" font-size="11">'+Math.round(mx*10)/10+'</text><text x="4" y="'+(Y(mn)+4)+'" fill="#8e96bd" font-size="11">'+Math.round(mn*10)/10+'</text>';
+ s+='<text x="'+pd+'" y="'+(h-3)+'" fill="#8e96bd" font-size="10">'+a[0].x+'</text><text x="'+(w-4)+'" y="'+(h-3)+'" text-anchor="end" fill="#8e96bd" font-size="10">'+a[a.length-1].x+'</text></svg>';return s;}
+function short(d){return d.slice(5).replace('-','.');}
+function onboard(){var g=S.g;
+ return '<h1 style="text-align:center;margin:10px 0 4px">💪 '+L('ФитТрек','FitTrack')+'</h1><div class="mu" style="text-align:center;margin-bottom:14px">'+L('Упражнения, дневник тренировок и вес','Exercises, workout log and body weight')+'</div>'+
+ '<h2>'+L('Кто ты?','Who are you?')+'</h2><div class="g2"><div class="gc'+(g==='m'?' on':'')+'" data-act="g" data-v="m"><b>👨</b>'+L('Мужчина','Man')+'</div><div class="gc'+(g==='f'?' on':'')+'" data-act="g" data-v="f"><b>👩</b>'+L('Женщина','Woman')+'</div></div>'+
+ '<h2>'+L('Цель','Goal')+'</h2><div class="chips">'+Object.keys(GOALS).map(function(k){return '<button class="chip'+(S.goal===k?' on':'')+'" data-act="goal" data-v="'+k+'">'+GOALS[k][0]+' '+L(GOALS[k][1],GOALS[k][2])+'</button>';}).join('')+'</div>'+
+ '<div class="mu">'+L('Вес, кг','Weight, kg')+'</div><input class="in" id="ow" type="number" inputmode="decimal" placeholder="70" value="'+(S.wt.length?S.wt[S.wt.length-1].w:'')+'">'+
+ '<div class="mu">'+L('Рост, см (необязательно)','Height, cm (optional)')+'</div><input class="in" id="oh" type="number" inputmode="numeric" placeholder="175" value="'+(S.h||'')+'">'+
+ '<div class="mu">'+L('Желаемый вес, кг (необязательно)','Target weight, kg (optional)')+'</div><input class="in" id="og" type="number" inputmode="decimal" placeholder="" value="'+(S.gw||'')+'">'+
+ '<button class="btn" data-act="start">'+L('Начать','Start')+'</button><div class="note">'+L('Приложение не заменяет врача или тренера. При проблемах со здоровьем сначала проконсультируйся с врачом. Начинай с лёгких весов и следи за техникой.','This app does not replace a doctor or coach. If you have health issues, consult a doctor first. Start light and focus on technique.')+'</div>';}
+function header(){return '<div class="hd"><h1>💪 '+L('ФитТрек','FitTrack')+'</h1><button class="ic" data-act="set">⚙️</button></div>';}
+function exRow(ex,star){var n=logsOf(ex.id).filter(function(l){return l.d===dkey();}).length;
+ return '<div class="row" data-act="open" data-v="'+ex.id+'">'+thumb(ex)+'<div><div class="nm">'+(star?'⭐ ':'')+nm(ex)+'</div><div class="sub">'+MU[ex.m][0]+' '+L(MU[ex.m][1],MU[ex.m][2])+' · '+rec(ex)+'</div></div>'+(n?'<div class="badge">'+n+'</div>':'')+'</div>';}
+function viewToday(){var pl=PLAN[S.g],wd=Object.keys(days()).length;if(planDay<0)planDay=wd%3;var cur=pl[planDay];
+ var h='<div class="card"><div class="mu">'+L('Твоя программа','Your plan')+' · '+GOALS[S.goal][0]+' '+L(GOALS[S.goal][1],GOALS[S.goal][2])+'</div><div style="font-size:20px;font-weight:800;margin-top:4px">'+L('День','Day')+' '+(planDay+1)+': '+L(cur[0][0],cur[0][1])+'</div></div><div class="chips">';
+ pl.forEach(function(d,i){h+='<button class="chip'+(i===planDay?' on':'')+'" data-act="day" data-v="'+i+'">'+L('День','Day')+' '+(i+1)+'</button>';});
+ h+='</div>';cur[1].forEach(function(id){h+=exRow(EXI[id]);});
+ if(S.goal==='loss')h+='<div class="card">🏃 '+L('Добавь 20 минут кардио: быстрая ходьба, бег или велосипед.','Add 20 minutes of cardio: brisk walk, run or bike.')+'</div>';
+ h+='<div class="note">'+L('Отдых между подходами 60–90 секунд. Заниматься 3 раза в неделю с днём отдыха между тренировками.','Rest 60–90 seconds between sets. Train 3 times a week with a rest day between sessions.')+'</div>';return h;}
+function viewEx(){var h='<div class="chips"><button class="chip'+(mus==='all'?' on':'')+'" data-act="mus" data-v="all">'+L('Все','All')+'</button>';
+ F.ORDER[S.g].forEach(function(m){h+='<button class="chip'+(mus===m?' on':'')+'" data-act="mus" data-v="'+m+'">'+MU[m][0]+' '+L(MU[m][1],MU[m][2])+'</button>';});h+='</div>';
+ var mine={};PLAN[S.g].forEach(function(d){d[1].forEach(function(i){mine[i]=1;});});
+ F.ORDER[S.g].forEach(function(m){if(mus!=='all'&&mus!==m)return;var l=EX.filter(function(e){return e.m===m;});if(!l.length)return;h+='<h2>'+MU[m][0]+' '+L(MU[m][1],MU[m][2])+'</h2>';l.forEach(function(e){h+=exRow(e,mine[e.id]);});});
+ h+='<div class="note">⭐ — '+L('есть в твоей программе','in your plan')+'</div>';return h;}
+function bmi(w){if(!S.h)return '';var b=w/Math.pow(S.h/100,2);return ' · '+L('ИМТ ','BMI ')+b.toFixed(1);}
+function viewWt(){var a=S.wt,cur=a.length?a[a.length-1].w:0,first=a.length?a[0].w:0,h='';
+ h+='<div class="card"><div class="mu">'+L('Текущий вес','Current weight')+'</div><div class="big">'+(cur?cur+' '+L('кг','kg'):'—')+'</div>';
+ if(a.length>1){var d=Math.round((cur-first)*10)/10;h+='<div class="mu">'+L('С начала: ','Since start: ')+(d>0?'+':'')+d+' '+L('кг','kg')+bmi(cur)+'</div>';}else if(cur)h+='<div class="mu">'+bmi(cur).slice(3)+'</div>';
+ if(S.gw&&cur){var r=Math.round((cur-S.gw)*10)/10;h+='<div class="mu" style="margin-top:4px">🎯 '+L('Цель ','Target ')+S.gw+' '+L('кг','kg')+' · '+(r===0?L('достигнута!','reached!'):L('осталось ','left ')+Math.abs(r)+' '+L('кг','kg'))+'</div>';}
+ h+='</div><div class="card"><div class="st"><input id="nw" type="number" inputmode="decimal" placeholder="'+(cur||70)+'"><button style="width:auto;padding:0 18px;background:var(--ac);color:#00131c;font-size:16px" data-act="addw">'+L('Записать','Save')+'</button></div><div class="mu">'+L('Взвешивайся утром, в одно и то же время.','Weigh yourself in the morning at the same time.')+'</div></div>';
+ h+='<div class="card">'+chart(a.slice(-30).map(function(x){return {x:short(x.d),y:x.w};}),320,170)+'</div>';
+ a.slice().reverse().slice(0,15).forEach(function(x,i){h+='<div class="set"><span>'+x.d+'</span><span>'+x.w+' '+L('кг','kg')+'<i data-act="delw" data-v="'+(a.length-1-i)+'">✕</i></span></div>';});return h;}
+function achs(){var wd=Object.keys(days()).length,st=streak(),v=vol(),pr=0;EX.forEach(function(e){var l=logsOf(e.id);if(l.length>1){var f=l[0].w,m=best(e.id);if(m>f)pr++;}});
+ return [[L('🎯 Первая тренировка','🎯 First workout'),wd>=1],[L('🏅 5 тренировок','🏅 5 workouts'),wd>=5],[L('🏆 20 тренировок','🏆 20 workouts'),wd>=20],[L('🔥 3 дня подряд','🔥 3 days in a row'),st>=3],[L('⚡ 7 дней подряд','⚡ 7 days in a row'),st>=7],[L('⚖️ 3 записи веса','⚖️ 3 weight entries'),S.wt.length>=3],[L('📈 Рост веса в упражнении','📈 Heavier in an exercise'),pr>=1],[L('🏋️ 1 000 кг в сумме','🏋️ 1,000 kg lifted'),v>=1000],[L('💎 10 000 кг в сумме','💎 10,000 kg lifted'),v>=10000]];}
+function viewPr(){var wd=Object.keys(days()).length,h='<div class="g2"><div class="stat"><b>'+wd+'</b><span class="mu">'+L('тренировок','workouts')+'</span></div><div class="stat"><b>'+streak()+'</b><span class="mu">'+L('дней подряд','day streak')+'</span></div><div class="stat"><b>'+S.log.length+'</b><span class="mu">'+L('подходов','sets')+'</span></div><div class="stat"><b>'+vol()+'</b><span class="mu">'+L('кг поднято','kg lifted')+'</span></div></div>';
+ h+='<h2>🏅 '+L('Достижения','Achievements')+'</h2><div>'+achs().map(function(a){return '<span class="ach'+(a[1]?' on':'')+'">'+(a[1]?'':'🔒 ')+a[0]+'</span>';}).join('')+'</div>';
+ h+='<h2>📈 '+L('Рост по упражнениям','Progress by exercise')+'</h2>';var any=0;
+ EX.forEach(function(e){var l=logsOf(e.id);if(!l.length)return;any=1;var f=l[0],m=best(e.id),dl=Math.round((m-f.w)*10)/10;h+='<div class="row" data-act="open" data-v="'+e.id+'">'+thumb(e)+'<div><div class="nm">'+nm(e)+'</div><div class="sub">'+L('Рекорд ','Best ')+m+' '+L('кг','kg')+' · '+l.length+' '+L('подх.','sets')+'</div></div><div class="badge" style="background:'+(dl>0?'var(--ok)':'var(--cd2)')+';color:'+(dl>0?'#00131c':'var(--mu)')+'">'+(dl>0?'+':'')+dl+'</div></div>';});
+ if(!any)h+='<div class="mu">'+L('Пока пусто. Открой упражнение и запиши первый подход.','Nothing yet. Open an exercise and log your first set.')+'</div>';return h;}
+function tabs(){var T=[['today','🏠',L('Сегодня','Today')],['ex','🏋️',L('Упражнения','Exercises')],['wt','⚖️',L('Вес','Weight')],['pr','📈',L('Прогресс','Progress')]];
+ return '<div class="tabs">'+T.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" data-act="tab" data-v="'+t[0]+'"><b>'+t[1]+'</b>'+t[2]+'</button>';}).join('')+'</div>';}
+function render(){document.body.setAttribute('data-g',S.g||'m');
+ if(!S.ok||settings){$app.innerHTML=onboard();return;}
+ var v=tab==='today'?viewToday():tab==='ex'?viewEx():tab==='wt'?viewWt():viewPr();$app.innerHTML=header()+v+tabs();}
+function setsToday(id){return S.log.map(function(l,i){l.i=i;return l;}).filter(function(l){return l.e===id&&l.d===dkey();});}
+function openEx(id){openId=id;var ex=EXI[id],l=S.last[id];form.w=l?l.w:startW(ex);form.r=l?l.r:parseInt(recReps(ex),10)||10;renderOv();}
+function renderOv(){if(!openId){$ov.style.display='none';$ov.innerHTML='';cancelAnimationFrame(raf);return;}
+ var ex=EXI[openId],h='<div class="hd"><button class="ic" data-act="close">←</button><div style="font-weight:800;font-size:16px;text-align:center;flex:1;padding:0 8px">'+nm(ex)+'</div><span style="width:40px"></span></div>';
+ h+='<svg class="fig" id="fig" viewBox="0 0 240 170"></svg>';
+ h+='<div class="card" style="margin-top:10px"><b>'+MU[ex.m][0]+' '+L(MU[ex.m][1],MU[ex.m][2])+'</b> · '+L('рекомендуем ','recommended ')+rec(ex)+(isBody(ex)?' · '+L('свой вес','bodyweight'):' · '+L('старт ~','start ~')+startW(ex)+' '+L('кг','kg'))+'</div>';
+ h+='<div class="card">'+ex.t.map(function(t){return '<div class="tip">✔ '+L(t[0],t[1])+'</div>';}).join('')+'</div>';
+ var b=best(openId);h+='<div class="card"><b>'+L('Записать подход','Log a set')+'</b>'+(b?' <span class="mu">· '+L('рекорд ','best ')+b+' '+L('кг','kg')+'</span>':'')+
+ '<div class="st"><label>'+(isBody(ex)?L('Доп. вес, кг','Extra, kg'):L('Вес, кг','Weight, kg'))+'</label><button data-act="st" data-k="w" data-v="-2.5">−</button><input id="fw" type="number" inputmode="decimal" value="'+form.w+'"><button data-act="st" data-k="w" data-v="2.5">+</button></div>'+
+ '<div class="st"><label>'+L('Повторы','Reps')+'</label><button data-act="st" data-k="r" data-v="-1">−</button><input id="fr" type="number" inputmode="numeric" value="'+form.r+'"><button data-act="st" data-k="r" data-v="1">+</button></div>'+
+ '<button class="btn" data-act="addset">✔ '+L('Записать подход','Log set')+'</button></div>';
+ var td=setsToday(openId);if(td.length){h+='<h2>'+L('Сегодня','Today')+'</h2>';td.forEach(function(l,i){h+='<div class="set"><span>'+L('Подход ','Set ')+(i+1)+'</span><span>'+l.w+' '+L('кг','kg')+' × '+l.r+'<i data-act="dels" data-v="'+l.i+'">✕</i></span></div>';});}
+ var by={};logsOf(openId).forEach(function(l){if(!by[l.d]||l.w>by[l.d])by[l.d]=l.w;});var ks=Object.keys(by).sort();
+ if(ks.length){h+='<h2>📈 '+L('Лучший вес по дням','Best weight by day')+'</h2><div class="card">'+chart(ks.slice(-12).map(function(k){return {x:short(k),y:by[k]};}),320,160)+'</div>';}
+ $ov.innerHTML=h;$ov.style.display='block';figEl=document.getElementById('fig');figEx=ex;cancelAnimationFrame(raf);loop(0);}
+function loop(ts){if(!openId||!figEl)return;var t=(1-Math.cos(ts/1100))/2;figEl.innerHTML=figInner(figEx,t);raf=requestAnimationFrame(loop);}
+function readForm(){var w=document.getElementById('fw'),r=document.getElementById('fr');if(w)form.w=parseFloat(w.value)||0;if(r)form.r=parseInt(r.value,10)||0;}
+document.addEventListener('click',function(e){var el=e.target.closest('[data-act]');if(!el)return;var a=el.getAttribute('data-act'),v=el.getAttribute('data-v');buzz();
+ if(a==='g'){S.g=v;save();render();}
+ else if(a==='goal'){S.goal=v;save();render();}
+ else if(a==='start'){if(!S.g){toast(L('Выбери: мужчина или женщина','Choose man or woman'));return;}var w=parseFloat(document.getElementById('ow').value),h=parseInt(document.getElementById('oh').value,10),g=parseFloat(document.getElementById('og').value);S.h=h>0?h:0;S.gw=g>0?g:0;if(w>0){var d=dkey(),last=S.wt[S.wt.length-1];if(!last||last.w!==w){S.wt=S.wt.filter(function(x){return x.d!==d;});S.wt.push({d:d,w:w});}}S.ok=1;settings=false;planDay=-1;save();render();}
+ else if(a==='set'){settings=true;render();}
+ else if(a==='tab'){tab=v;render();window.scrollTo(0,0);}
+ else if(a==='day'){planDay=parseInt(v,10);render();}
+ else if(a==='mus'){mus=v;render();}
+ else if(a==='open'){openEx(v);}
+ else if(a==='close'){openId=null;renderOv();render();}
+ else if(a==='st'){readForm();var k=el.getAttribute('data-k');form[k]=Math.max(0,Math.round((form[k]+parseFloat(v))*10)/10);document.getElementById(k==='w'?'fw':'fr').value=form[k];}
+ else if(a==='addset'){readForm();if(form.r<1){toast(L('Укажи повторы','Enter reps'));return;}var ex=EXI[openId],prev=best(openId),had=logsOf(openId).length;S.log.push({d:dkey(),e:openId,w:form.w,r:form.r,t:Date.now()});S.last[openId]={w:form.w,r:form.r};save();toast(had&&form.w>prev?'🏆 '+L('Новый рекорд!','New record!'):'✔ '+L('Подход записан','Set logged'));renderOv();}
+ else if(a==='dels'){S.log.splice(parseInt(v,10),1);save();renderOv();}
+ else if(a==='addw'){var x=parseFloat(document.getElementById('nw').value);if(!(x>20&&x<400)){toast(L('Введи вес в кг','Enter weight in kg'));return;}var d2=dkey();S.wt=S.wt.filter(function(y){return y.d!==d2;});S.wt.push({d:d2,w:x});S.wt.sort(function(p,q){return p.d<q.d?-1:1;});save();toast('⚖️ '+L('Вес записан','Weight saved'));render();}
+ else if(a==='delw'){S.wt.splice(parseInt(v,10),1);save();render();}
+});
+if('serviceWorker'in navigator){try{navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}}
+render();
+window.__ft={S:S,openEx:openEx,render:render,figInner:figInner};
+})();
+</script></body></html>
