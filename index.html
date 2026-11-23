@@ -117,7 +117,11 @@ function p2(n){return n<10?'0'+n:''+n;}
 function dkey(d){d=d||new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
 function load(){var d={g:'',goal:'mass',h:0,gw:0,wt:[],log:[],last:{}};try{var o=JSON.parse(localStorage.getItem('ft1')||'{}');for(var k in o)d[k]=o[k];}catch(e){}return d;}
 var S=load();function save(){try{localStorage.setItem('ft1',JSON.stringify(S));}catch(e){}}
-var tab='today',mus='all',planDay=-1,openId=null,form={w:0,r:10},settings=false,raf=0,figEl=null,figEx=null;
+MU.arms=['💪','Руки','Arms'];
+function exFor(m){return m==='arms'?EX.filter(function(e){return e.m==='biceps'||e.m==='triceps';}):EX.filter(function(e){return e.m===m;});}
+function defMy(){var seen={};return ['legs','chest','back','chest','back','shoulders','arms'].map(function(m){var l=exFor(m),i=seen[m]||0;seen[m]=i+1;return {m:m,e:l[i%l.length].id};});}
+if(!S.my)S.my=defMy();
+var ovMode=null,pickIdx=0,tab='today',mus='all',planDay=-1,openId=null,form={w:0,r:10},settings=false,raf=0,figEl=null,figEx=null;
 var $app=document.getElementById('app'),$ov=document.getElementById('ov'),$t=document.getElementById('toast'),tT=0;
 function toast(s){$t.textContent=s;$t.style.display='block';clearTimeout(tT);tT=setTimeout(function(){$t.style.display='none';},2400);}
 function nm(e){return L(e.n[0],e.n[1]);}
@@ -162,10 +166,11 @@ function onboard(){var g=S.g;
  '<div class="mu">'+L('Желаемый вес, кг (необязательно)','Target weight, kg (optional)')+'</div><input class="in" id="og" type="number" inputmode="decimal" placeholder="" value="'+(S.gw||'')+'">'+
  '<button class="btn" data-act="start">'+L('Начать','Start')+'</button><div class="note">'+L('Приложение не заменяет врача или тренера. При проблемах со здоровьем сначала проконсультируйся с врачом. Начинай с лёгких весов и следи за техникой.','This app does not replace a doctor or coach. If you have health issues, consult a doctor first. Start light and focus on technique.')+'</div>';}
 function header(){return '<div class="hd"><h1>💪 '+L('ФитТрек','FitTrack')+'</h1><button class="ic" data-act="set">⚙️</button></div>';}
-function exRow(ex,star){var n=logsOf(ex.id).filter(function(l){return l.d===dkey();}).length;
- return '<div class="row" data-act="open" data-v="'+ex.id+'">'+thumb(ex)+'<div><div class="nm">'+(star?'⭐ ':'')+nm(ex)+'</div><div class="sub">'+MU[ex.m][0]+' '+L(MU[ex.m][1],MU[ex.m][2])+' · '+rec(ex)+'</div></div>'+(n?'<div class="badge">'+n+'</div>':'')+'</div>';}
-function viewToday(){var pl=PLAN[S.g],wd=Object.keys(days()).length;if(planDay<0)planDay=wd%3;var cur=pl[planDay];
- var h='<div class="card"><div class="mu">'+L('Твоя программа','Your plan')+' · '+GOALS[S.goal][0]+' '+L(GOALS[S.goal][1],GOALS[S.goal][2])+'</div><div style="font-size:20px;font-weight:800;margin-top:4px">'+L('День','Day')+' '+(planDay+1)+': '+L(cur[0][0],cur[0][1])+'</div></div><div class="chips">';
+function exRow(ex,star,num){var n=logsOf(ex.id).filter(function(l){return l.d===dkey();}).length;
+ return '<div class="row" data-act="open" data-v="'+ex.id+'">'+thumb(ex)+'<div><div class="nm">'+(num?num+'. ':'')+(star?'⭐ ':'')+nm(ex)+'</div><div class="sub">'+MU[ex.m][0]+' '+L(MU[ex.m][1],MU[ex.m][2])+' · '+rec(ex)+'</div></div>'+(n?'<div class="badge">'+n+'</div>':'')+'</div>';}
+function viewToday(){var pl=PLAN[S.g],wd=Object.keys(days()).length;if(planDay===-1)planDay=(S.pd!=null?S.pd:wd%3);var my=planDay==='my',cur=my?null:pl[planDay];
+ if(my){var hh='<div class="card"><div class="mu">'+L('Моя тренировка','My workout')+'</div><div style="font-size:20px;font-weight:800;margin-top:4px">'+S.my.length+' '+L('упражнений по порядку','exercises in order')+'</div></div><div class="chips"><button class="chip on" data-act="day" data-v="my">⭐ '+L('Моя','Mine')+'</button>';pl.forEach(function(d,i){hh+='<button class="chip" data-act="day" data-v="'+i+'">'+L('День','Day')+' '+(i+1)+'</button>';});hh+='</div>';S.my.forEach(function(sl,i){hh+=exRow(EXI[sl.e],0,i+1);});hh+='<button class="btn2" style="width:100%;margin-top:6px" data-act="edit">✏️ '+L('Изменить порядок и упражнения','Edit order and exercises')+'</button>';return hh;}
+ var h='<div class="card"><div class="mu">'+L('Твоя программа','Your plan')+' · '+GOALS[S.goal][0]+' '+L(GOALS[S.goal][1],GOALS[S.goal][2])+'</div><div style="font-size:20px;font-weight:800;margin-top:4px">'+L('День','Day')+' '+(planDay+1)+': '+L(cur[0][0],cur[0][1])+'</div></div><div class="chips"><button class="chip" data-act="day" data-v="my">⭐ '+L('Моя','Mine')+'</button>';
  pl.forEach(function(d,i){h+='<button class="chip'+(i===planDay?' on':'')+'" data-act="day" data-v="'+i+'">'+L('День','Day')+' '+(i+1)+'</button>';});
  h+='</div>';cur[1].forEach(function(id){h+=exRow(EXI[id]);});
  if(S.goal==='loss')h+='<div class="card">🏃 '+L('Добавь 20 минут кардио: быстрая ходьба, бег или велосипед.','Add 20 minutes of cardio: brisk walk, run or bike.')+'</div>';
@@ -196,8 +201,18 @@ function render(){document.body.setAttribute('data-g',S.g||'m');
  if(!S.ok||settings){$app.innerHTML=onboard();return;}
  var v=tab==='today'?viewToday():tab==='ex'?viewEx():tab==='wt'?viewWt():viewPr();$app.innerHTML=header()+v+tabs();}
 function setsToday(id){return S.log.map(function(l,i){l.i=i;return l;}).filter(function(l){return l.e===id&&l.d===dkey();});}
-function openEx(id){openId=id;var ex=EXI[id],l=S.last[id];form.w=l?l.w:startW(ex);form.r=l?l.r:parseInt(recReps(ex),10)||10;renderOv();}
-function renderOv(){if(!openId){$ov.style.display='none';$ov.innerHTML='';cancelAnimationFrame(raf);return;}
+function openEx(id){openId=id;ovMode='ex';var ex=EXI[id],l=S.last[id];form.w=l?l.w:startW(ex);form.r=l?l.r:parseInt(recReps(ex),10)||10;renderOv();}
+function renderEditOv(){cancelAnimationFrame(raf);figEl=null;
+ var h='<div class="hd"><button class="ic" data-act="close">←</button><div style="font-weight:800;font-size:17px;flex:1;text-align:center">'+L('Моя тренировка','My workout')+'</div><span style="width:40px"></span></div><div class="mu" style="margin-bottom:8px">'+L('Порядок упражнений за одну тренировку. Нажми на упражнение, чтобы заменить.','Exercise order for one workout. Tap an exercise to replace it.')+'</div>';
+ S.my.forEach(function(sl,i){h+='<div class="row" style="cursor:default"><div style="flex:1" data-act="pick" data-v="'+i+'"><div class="nm">'+(i+1)+'. '+MU[sl.m][0]+' '+L(MU[sl.m][1],MU[sl.m][2])+'</div><div class="sub">'+nm(EXI[sl.e])+' ✎</div></div><button class="btn2" data-act="mv" data-v="'+i+':-1">↑</button><button class="btn2" data-act="mv" data-v="'+i+':1">↓</button><button class="btn2" data-act="rm" data-v="'+i+'">✕</button></div>';});
+ h+='<h2>'+L('Добавить','Add')+'</h2><div class="chips" style="flex-wrap:wrap">';Object.keys(MU).forEach(function(m){h+='<button class="chip" data-act="addm" data-v="'+m+'">+ '+MU[m][0]+' '+L(MU[m][1],MU[m][2])+'</button>';});
+ h+='</div><button class="btn2" style="width:100%;margin-top:10px" data-act="resetmy">↺ '+L('Вернуть порядок по умолчанию','Reset to default')+'</button>';
+ $ov.innerHTML=h;$ov.style.display='block';}
+function renderPickOv(){var sl=S.my[pickIdx];if(!sl){ovMode='edit';return renderEditOv();}
+ var h='<div class="hd"><button class="ic" data-act="close">←</button><div style="font-weight:800;font-size:17px;flex:1;text-align:center">'+MU[sl.m][0]+' '+L(MU[sl.m][1],MU[sl.m][2])+'</div><span style="width:40px"></span></div>';
+ exFor(sl.m).forEach(function(e){h+='<div class="row" data-act="setex" data-v="'+pickIdx+':'+e.id+'">'+thumb(e)+'<div><div class="nm">'+(e.id===sl.e?'✔ ':'')+nm(e)+'</div><div class="sub">'+rec(e)+'</div></div></div>';});
+ $ov.innerHTML=h;$ov.style.display='block';window.scrollTo(0,0);}
+function renderOv(){if(ovMode==='edit')return renderEditOv();if(ovMode==='pick')return renderPickOv();if(!openId){$ov.style.display='none';$ov.innerHTML='';cancelAnimationFrame(raf);return;}
  var ex=EXI[openId],h='<div class="hd"><button class="ic" data-act="close">←</button><div style="font-weight:800;font-size:16px;text-align:center;flex:1;padding:0 8px">'+nm(ex)+'</div><span style="width:40px"></span></div>';
  h+='<svg class="fig" id="fig" viewBox="0 0 240 170"></svg>';
  h+='<div class="card" style="margin-top:10px"><b>'+MU[ex.m][0]+' '+L(MU[ex.m][1],MU[ex.m][2])+'</b> · '+L('рекомендуем ','recommended ')+rec(ex)+(isBody(ex)?' · '+L('свой вес','bodyweight'):' · '+L('старт ~','start ~')+startW(ex)+' '+L('кг','kg'))+'</div>';
@@ -210,7 +225,7 @@ function renderOv(){if(!openId){$ov.style.display='none';$ov.innerHTML='';cancel
  var by={};logsOf(openId).forEach(function(l){if(!by[l.d]||l.w>by[l.d])by[l.d]=l.w;});var ks=Object.keys(by).sort();
  if(ks.length){h+='<h2>📈 '+L('Лучший вес по дням','Best weight by day')+'</h2><div class="card">'+chart(ks.slice(-12).map(function(k){return {x:short(k),y:by[k]};}),320,160)+'</div>';}
  $ov.innerHTML=h;$ov.style.display='block';figEl=document.getElementById('fig');figEx=ex;cancelAnimationFrame(raf);loop(0);}
-function loop(ts){if(!openId||!figEl)return;var t=(1-Math.cos(ts/1100))/2;figEl.innerHTML=figInner(figEx,t);raf=requestAnimationFrame(loop);}
+function loop(ts){if(ovMode!=='ex'||!openId||!figEl)return;var t=(1-Math.cos(ts/1100))/2;figEl.innerHTML=figInner(figEx,t);raf=requestAnimationFrame(loop);}
 function readForm(){var w=document.getElementById('fw'),r=document.getElementById('fr');if(w)form.w=parseFloat(w.value)||0;if(r)form.r=parseInt(r.value,10)||0;}
 document.addEventListener('click',function(e){var el=e.target.closest('[data-act]');if(!el)return;var a=el.getAttribute('data-act'),v=el.getAttribute('data-v');buzz();
  if(a==='g'){S.g=v;save();render();}
@@ -218,10 +233,17 @@ document.addEventListener('click',function(e){var el=e.target.closest('[data-act
  else if(a==='start'){if(!S.g){toast(L('Выбери: мужчина или женщина','Choose man or woman'));return;}var w=parseFloat(document.getElementById('ow').value),h=parseInt(document.getElementById('oh').value,10),g=parseFloat(document.getElementById('og').value);S.h=h>0?h:0;S.gw=g>0?g:0;if(w>0){var d=dkey(),last=S.wt[S.wt.length-1];if(!last||last.w!==w){S.wt=S.wt.filter(function(x){return x.d!==d;});S.wt.push({d:d,w:w});}}S.ok=1;settings=false;planDay=-1;save();render();}
  else if(a==='set'){settings=true;render();}
  else if(a==='tab'){tab=v;render();window.scrollTo(0,0);}
- else if(a==='day'){planDay=parseInt(v,10);render();}
+ else if(a==='day'){planDay=v==='my'?'my':parseInt(v,10);S.pd=planDay;save();render();}
  else if(a==='mus'){mus=v;render();}
  else if(a==='open'){openEx(v);}
- else if(a==='close'){openId=null;renderOv();render();}
+ else if(a==='close'){if(ovMode==='pick'){ovMode='edit';renderOv();return;}openId=null;ovMode=null;renderOv();render();}
+ else if(a==='edit'){ovMode='edit';renderOv();window.scrollTo(0,0);}
+ else if(a==='pick'){pickIdx=parseInt(v,10);ovMode='pick';renderOv();}
+ else if(a==='setex'){var q=v.split(':');S.my[parseInt(q[0],10)].e=q[1];save();ovMode='edit';renderOv();}
+ else if(a==='mv'){var q2=v.split(':'),i0=parseInt(q2[0],10),i1=i0+parseInt(q2[1],10);if(i1>=0&&i1<S.my.length){var tmp=S.my[i0];S.my[i0]=S.my[i1];S.my[i1]=tmp;save();renderOv();}}
+ else if(a==='rm'){if(S.my.length>1){S.my.splice(parseInt(v,10),1);save();renderOv();}}
+ else if(a==='addm'){S.my.push({m:v,e:exFor(v)[0].id});save();renderOv();}
+ else if(a==='resetmy'){S.my=defMy();save();renderOv();}
  else if(a==='st'){readForm();var k=el.getAttribute('data-k');form[k]=Math.max(0,Math.round((form[k]+parseFloat(v))*10)/10);document.getElementById(k==='w'?'fw':'fr').value=form[k];}
  else if(a==='addset'){readForm();if(form.r<1){toast(L('Укажи повторы','Enter reps'));return;}var ex=EXI[openId],prev=best(openId),had=logsOf(openId).length;S.log.push({d:dkey(),e:openId,w:form.w,r:form.r,t:Date.now()});S.last[openId]={w:form.w,r:form.r};save();toast(had&&form.w>prev?'🏆 '+L('Новый рекорд!','New record!'):'✔ '+L('Подход записан','Set logged'));renderOv();}
  else if(a==='dels'){S.log.splice(parseInt(v,10),1);save();renderOv();}
